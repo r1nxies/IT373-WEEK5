@@ -1,3 +1,37 @@
 body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
 nav a { margin-right: .75rem; text-decoration: none; }
 h1 { margin: 0 0 1rem; }
+
+.field-error {
+  border-left: 4px solid #d9534f;
+  padding-left: 8px;
+  margin-bottom: 0.5rem;
+  background: #fff6f6;
+}
+
+.field-error-text {
+  color: #a94442;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.form-nonfield-errors {
+  border: 1px solid #f0ad4e;
+  background: #fffaf0;
+  padding: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.container .card {
+  border-radius: 0.5rem;
+}
+
+.field-error {
+  border-left: 4px solid #dc3545;
+  padding-left: 8px;
+  background: rgba(220,53,69,0.03);
+}
+
+.invalid-feedback {
+  display: block;
+}

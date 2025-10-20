@@ -20,6 +20,7 @@ from pages import views as page_views
 
 handler404 = 'pages.views.page_not_found_view'
 handler500 = 'pages.views.server_error_view'
+handler403 = 'pages.views.csrf_failure_view'
 
 urlpatterns = [
     path('admin/', admin.site.urls),

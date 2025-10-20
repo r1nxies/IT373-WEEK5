@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}CSRF verification failed{% endblock %}
+{% block content %}
+  <h1>CSRF verification failed</h1>
+  <p>Sorry — your request could not be verified. This usually happens if your session expired or your browser blocked cookies.</p>
+  <p>Try these steps:</p>
+  <ul>
+    <li>Reload the page and try again.</li>
+    <li>Make sure cookies are enabled for this site.</li>
+    <li>If you were pasting a form link, open the post page directly and try again.</li>
+  </ul>
+  {% if reason %}
+    <details>
+      <summary>Technical reason</summary>
+      <pre>{{ reason }}</pre>
+    </details>
+  {% endif %}
+{% endblock %}

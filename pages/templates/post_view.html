@@ -1,22 +1,109 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}{{ post.title }}{% endblock %}
+
 {% block content %}
- <h1>{{ post.title }} | <span><small>Posted on {{ post.created_at|timesince }} ago.</small></span></h1>
- 
- <span>
-   <a href="{% url 'post_update' post.pk %}">Edit</a> | 
-   <a href="{% url 'post_delete' post.pk %}">Delete</a>
-</span>
- 
- <p>{{ post.body }}</p>
- 
-   <h4>Comments ({{ post.comments.count }})</h4>
-   <ul>
-      {% for comment in post.comments.all %}
-         <li><strong>{{ comment.author }}:</strong> {{ comment.text }} | {{ comment.created_at|timesince}} ago.</li>
-      {% empty %}
-         <li>No comment yet.</li>
-      {% endfor %}
-   </ul>  
- 
+<div class="container py-4">
+  <!-- Back link -->
+  <div class="mb-3">
+    <a class="btn btn-sm btn-outline-secondary" href="/" aria-label="Back to list">&larr; Back</a>
+  </div>
+
+  <!-- Post card -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title mb-1">{{ post.title }}</h2>
+      <p class="text-muted small mb-2">Posted on {{ post.created_at|date:"F j, Y, g:ia" }}</p>
+      <div class="card-text mb-3">{{ post.body|linebreaks }}</div>
+
+      <div>
+        <a class="btn btn-outline-primary btn-sm me-2" href="{% url 'post_update' post.pk %}">Edit</a>
+        <a class="btn btn-outline-danger btn-sm" href="{% url 'post_delete' post.pk %}">Delete</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments -->
+  <div class="mb-4">
+    <h4 class="mb-3">Comments <small class="text-muted">({{ post.comments.count }})</small></h4>
+
+    {% if post.comments.exists %}
+      <ul class="list-group mb-3">
+        {% for comment in post.comments.all %}
+          <li class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">{{ comment.author|default:"Anonymous" }}</h6>
+              <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+            </div>
+            <p class="mb-0">{{ comment.text|linebreaks }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="alert alert-light">No comments yet — be the first to add one.</div>
+    {% endif %}
+  </div>
+
+  <!-- Comment form -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title">Add a comment</h5>
+
+      {# show any non-field errors #}
+      {% if comment_form.non_field_errors %}
+        <div class="alert alert-warning">
+          {{ comment_form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'post_view' post.pk %}" novalidate>
+        {% csrf_token %}
+
+        {# AUTHOR FIELD (name) #}
+        <div class="mb-3">
+          <label for="{{ comment_form.author.id_for_label }}" class="form-label">Name</label>
+
+          <input
+            id="{{ comment_form.author.id_for_label }}"
+            name="{{ comment_form.author.html_name }}"
+            type="text"
+            value="{{ comment_form.author.value|default_if_none:'' }}"
+            class="form-control {% if comment_form.author.errors %}is-invalid{% endif %}"
+            placeholder="{{ comment_form.author.field.widget.attrs.placeholder|default:'Your name' }}"
+            maxlength="{{ comment_form.author.field.max_length|default_if_none:'' }}"
+          >
+
+          {% for err in comment_form.author.errors %}
+            <div class="invalid-feedback">
+              {{ err }}
+            </div>
+          {% endfor %}
+        </div>
+
+        {# TEXT FIELD (comment body) #}
+        <div class="mb-3">
+          <label for="{{ comment_form.text.id_for_label }}" class="form-label">Comment</label>
+
+          <textarea
+            id="{{ comment_form.text.id_for_label }}"
+            name="{{ comment_form.text.html_name }}"
+            rows="{{ comment_form.text.field.widget.attrs.rows|default:3 }}"
+            class="form-control {% if comment_form.text.errors %}is-invalid{% endif %}"
+            placeholder="{{ comment_form.text.field.widget.attrs.placeholder|default:'Your comment' }}"
+          >{{ comment_form.text.value|default_if_none:'' }}</textarea>
+
+          {% for err in comment_form.text.errors %}
+            <div class="invalid-feedback">
+              {{ err }}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div>
+          <button class="btn btn-primary" type="submit">Post comment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

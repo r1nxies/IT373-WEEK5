@@ -1,0 +1,57 @@
+{# pages/templates/post_create.html #}
+{% extends 'base.html' %}
+{% block title %}Create post{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="mb-3">
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'post_list' %}">&larr; Back to posts</a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="card-title mb-3">Create a new post</h4>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-warning">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+          <input
+            id="{{ form.title.id_for_label }}"
+            name="{{ form.title.html_name }}"
+            type="text"
+            value="{{ form.title.value|default_if_none:'' }}"
+            class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+            placeholder="{{ form.title.field.widget.attrs.placeholder|default:'Title' }}"
+            maxlength="{{ form.title.field.max_length|default_if_none:'' }}"
+          >
+          {% for err in form.title.errors %}
+            <div class="invalid-feedback">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <label for="{{ form.body.id_for_label }}" class="form-label">Body</label>
+          <textarea
+            id="{{ form.body.id_for_label }}"
+            name="{{ form.body.html_name }}"
+            rows="{{ form.body.field.widget.attrs.rows|default:6 }}"
+            class="form-control {% if form.body.errors %}is-invalid{% endif %}"
+            placeholder="{{ form.body.field.widget.attrs.placeholder|default:'Write your post...' }}"
+          >{{ form.body.value|default_if_none:'' }}</textarea>
+          {% for err in form.body.errors %}
+            <div class="invalid-feedback">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary" type="submit">Create</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
